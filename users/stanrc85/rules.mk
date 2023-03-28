@@ -47,6 +47,10 @@ ifeq ($(strip $(KEYBOARD)), nasu)
   SRC += indicator_layers_sneakbox.c
   SRC += startup_fanfare.c
   OPT_DEFS += -DHAS_INDICATORS
+  VIAL_ENABLE = yes
+  LTO_ENABLE = no
+  QMK_SETTINGS = yes
+  KEY_OVERRIDE_ENABLE = no
 endif
 ifeq ($(strip $(KEYBOARD)), mechlovin/adelais/standard_led/arm/rev4/apm32f103)
   OPT_DEFS += -DHAS_INDICATORS
