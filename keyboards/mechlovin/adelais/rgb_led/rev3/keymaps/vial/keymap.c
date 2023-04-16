@@ -108,3 +108,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 }
+
+void rgb_matrix_indicators_kb(void) {
+        switch(get_highest_layer(layer_state|default_layer_state)) {
+            case 1:
+                rgb_matrix_set_color(0, 0, 255, 0);
+                break;
+            case 2:
+                rgb_matrix_set_color(0, 0, 0, 255);
+                break;
+            case 3:
+                rgb_matrix_set_color(0, 255, 255, 255);
+                break;
+            default:
+                break;
+        }
+}
