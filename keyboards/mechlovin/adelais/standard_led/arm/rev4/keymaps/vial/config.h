@@ -6,9 +6,8 @@
 #define VIAL_UNLOCK_COMBO_ROWS { 0, 2 }
 #define VIAL_UNLOCK_COMBO_COLS { 0, 13 }
 
-#define RGB_DISABLE_TIMEOUT 900000 // milliseconds
-
-#define RGB_DISABLE_WHEN_USB_SUSPENDED 1
+#define RGBLIGHT_SLEEP  // allows us to use rgblight_suspend() and rgblight_wakeup() in keymap.c
+#define RGBLIGHT_TIMEOUT 600000  // 10 min (600 seconds) 
 
 #define INDICATOR_PIN_0 B2
 #define INDICATOR_PIN_1 C15
