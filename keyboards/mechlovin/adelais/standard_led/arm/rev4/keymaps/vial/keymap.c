@@ -57,6 +57,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+    writePin(INDICATOR_PIN_2, layer_state_cmp(state, 3) || layer_state_cmp(state, 1));
+    writePin(INDICATOR_PIN_1, layer_state_cmp(state, 2) || layer_state_cmp(state, 1));    
+    return state;
+}
+
+bool led_update_user(led_t led_state) {
+    writePin(INDICATOR_PIN_0, led_state.caps_lock);
+    return false;
+}
+
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) {
