@@ -136,24 +136,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-static uint16_t key_timer; // timer to track the last keyboard activity
+static uint32_t key_timer; // timer to track the last keyboard activity
 static void refresh_rgb(void); // refreshes the activity timer and RGB, invoke whenever activity happens
 static void check_rgb_timeout(void); // checks if enough time has passed for RGB to timeout
 bool is_rgb_timeout = false; // store if RGB has timed out or not in a boolean
 
 
 void refresh_rgb() {
-  key_timer = timer_read(); // store time of last refresh
+  key_timer = timer_read32(); // store time of last refresh
   if (is_rgb_timeout) { // only do something if rgb has timed out
-    print("Activity detected, removing timeout\n");
+    print("Activity detected, turning on RGB\n");
     is_rgb_timeout = false;
     rgblight_wakeup();
   }
 }
 
 void check_rgb_timeout() {
-  if (!is_rgb_timeout && timer_elapsed(key_timer) > RGBLIGHT_TIMEOUT) {
+  if (!is_rgb_timeout && timer_elapsed32(key_timer) > RGBLIGHT_TIMEOUT) {
     rgblight_suspend();
+    print("Idle timeout reached, turning off RGB\n");
     is_rgb_timeout = true;
   }
 }
