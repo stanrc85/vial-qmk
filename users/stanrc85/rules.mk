@@ -53,3 +53,12 @@ ifeq ($(strip $(KEYBOARD)), mechlovin/adelais/standard_led/arm/rev4/apm32f103)
   SRC += rgb_timeout.c
   SRC += indicator_layers_sneakbox.c
 endif
+ifeq ($(strip $(KEYBOARD)), sneakbox/aliceclonergb)
+  SRC += indicator_layers_sneakbox.c
+  SRC += startup_fanfare.c
+  OPT_DEFS += -DHAS_INDICATORS
+  VIAL_ENABLE = yes
+  LTO_ENABLE = yes
+  KEY_OVERRIDE_ENABLE = no
+  COMBO_ENABLE = no
+endif
