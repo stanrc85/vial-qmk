@@ -124,3 +124,48 @@ void rgb_matrix_indicators_kb(void) {
                 break;
         }
 }
+
+static uint32_t key_timer; // timer to track the last keyboard activity
+static void refresh_rgb(void); // refreshes the activity timer and RGB, invoke whenever activity happens
+static void check_rgb_timeout(void); // checks if enough time has passed for RGB to timeout
+bool is_rgb_timeout = false; // store if RGB has timed out or not in a boolean
+
+
+void refresh_rgb() {
+  key_timer = timer_read32(); // store time of last refresh
+  if (is_rgb_timeout) { // only do something if rgb has timed out
+    print("Activity detected, turning on RGB\n");
+    is_rgb_timeout = false;
+    rgb_matrix_set_suspend_state(false);
+    rgblight_wakeup();
+  }
+}
+
+void check_rgb_timeout() {
+  if (!is_rgb_timeout && timer_elapsed32(key_timer) > RGBLIGHT_TIMEOUT) {
+    rgblight_suspend();
+    rgb_matrix_set_suspend_state(true);
+    print("Idle timeout reached, turning off RGB\n");
+    is_rgb_timeout = true;
+  }
+}
+
+
+void housekeeping_task_user(void) {
+  #ifdef RGBLIGHT_TIMEOUT
+  check_rgb_timeout();
+  #endif
+}
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+  #ifdef RGBLIGHT_TIMEOUT
+  if (record->event.pressed) refresh_rgb();
+  #endif
+}
+
+
+void post_encoder_update_user(uint8_t index, bool clockwise) {
+  #ifdef RGBLIGHT_TIMEOUT
+  refresh_rgb();
+  #endif
+}
