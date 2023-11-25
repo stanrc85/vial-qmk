@@ -109,7 +109,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void rgb_matrix_indicators_kb(void) {
+bool rgb_matrix_indicators_user(void) {
         switch(get_highest_layer(layer_state|default_layer_state)) {
             case 1:
                 rgb_matrix_set_color(0, 0, 255, 0);
@@ -123,6 +123,7 @@ void rgb_matrix_indicators_kb(void) {
             default:
                 break;
         }
+    return true;
 }
 
 static uint32_t key_timer; // timer to track the last keyboard activity
