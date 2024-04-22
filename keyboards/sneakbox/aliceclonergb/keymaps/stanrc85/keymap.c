@@ -50,3 +50,105 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
               _______,          _______, _______, _______,                             _______,          _______,          TG(_DEFAULT)
   )
 };
+
+//RGB Timeout
+
+static uint32_t key_timer; // timer to track the last keyboard activity
+static void refresh_rgb(void); // refreshes the activity timer and RGB, invoke whenever activity happens
+static void check_rgb_timeout(void); // checks if enough time has passed for RGB to timeout
+bool is_rgb_timeout = false; // store if RGB has timed out or not in a boolean
+
+
+void refresh_rgb() {
+  key_timer = timer_read32(); // store time of last refresh
+  if (is_rgb_timeout) { // only do something if rgb has timed out
+    print("Activity detected, turning on RGB\n");
+    is_rgb_timeout = false;
+    rgblight_wakeup();
+  }
+}
+
+void check_rgb_timeout() {
+  if (!is_rgb_timeout && timer_elapsed32(key_timer) > RGBLIGHT_TIMEOUT) {
+    rgblight_suspend();
+    print("Idle timeout reached, turning off RGB\n");
+    is_rgb_timeout = true;
+  }
+}
+
+
+void housekeeping_task_user(void) {
+  #ifdef RGBLIGHT_TIMEOUT
+  check_rgb_timeout();
+  #endif
+}
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+  #ifdef RGBLIGHT_TIMEOUT
+  if (record->event.pressed) refresh_rgb();
+  #endif
+}
+
+
+void post_encoder_update_user(uint8_t index, bool clockwise) {
+  #ifdef RGBLIGHT_TIMEOUT
+  refresh_rgb();
+  #endif
+}
+
+
+//Layer Indicators
+layer_state_t layer_state_set_user(layer_state_t state) {
+    writePin(INDICATOR_PIN_2, layer_state_cmp(state, 3) || layer_state_cmp(state, 1));
+    writePin(INDICATOR_PIN_1, layer_state_cmp(state, 2) || layer_state_cmp(state, 1));    
+    return state;
+}
+
+bool led_update_user(led_t led_state) {
+    writePin(INDICATOR_PIN_0, led_state.caps_lock);
+    return false;
+}
+
+//Startup fanfare
+
+static uint8_t top = 0;
+static uint8_t middle = 0;
+static uint8_t bottom = 0;
+
+static bool is_enabled = true;
+static bool is_rgblight_startup = true;
+static uint16_t rgblight_startup_loop_timer;
+
+void matrix_scan_user(void) {
+    // Boot up "fanfare"
+    if (is_rgblight_startup && is_keyboard_master()) {
+        if (timer_elapsed(rgblight_startup_loop_timer) > 10) {
+            static uint8_t counter;
+            counter++;
+            if (counter == 1) {
+                top = 1;
+                writePin(INDICATOR_PIN_0, top);
+                wait_ms(300);
+                top = 0;
+                writePin(INDICATOR_PIN_0, top);
+            }
+            if (counter == 2) {
+                middle = 1;
+                writePin(INDICATOR_PIN_1, middle);
+                wait_ms(300);
+                middle = 0;
+                writePin(INDICATOR_PIN_1, middle);
+            }
+            if (counter == 3) {
+                bottom = 1;
+                writePin(INDICATOR_PIN_2, bottom);
+                wait_ms(300);
+                bottom = 0;
+                writePin(INDICATOR_PIN_2, bottom);
+            }
+            if (counter == 4) {
+                is_enabled = is_rgblight_startup = false;
+            }
+        }
+    }
+}
