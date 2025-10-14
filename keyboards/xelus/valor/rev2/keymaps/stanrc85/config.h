@@ -7,4 +7,4 @@
 #define VIAL_UNLOCK_COMBO_ROWS { 0, 2 }
 #define VIAL_UNLOCK_COMBO_COLS { 1, 13 }
 
-#define RGB_MATRIX_TIMEOUT 300000 // number of milliseconds to wait until rgb automatically turns off
+#define RGB_MATRIX_TIMEOUT 600000 // number of milliseconds to wait until rgb automatically turns off
