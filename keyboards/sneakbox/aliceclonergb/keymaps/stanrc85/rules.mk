@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 USER_NAME := stanrc85
-
-=======
 VIAL_ENABLE = yes
 VIA_ENABLE = yes
 LTO_ENABLE = yes
@@ -12,4 +9,3 @@ MOUSEKEY_ENABLE = no
 AUDIO_ENABLE = no
 CONSOLE_ENABLE = no
 REPEAT_KEY_ENABLE = no
->>>>>>> 15b1cf4741 (space saving measures)
